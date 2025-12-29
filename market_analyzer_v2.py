@@ -292,9 +292,12 @@ def main():
     """)
 
     # Load real clinic data from CSV
+    st.write("Loading data...")  # Debug
     df = load_clinic_data()
+    st.write(f"Loaded {len(df)} rows")  # Debug
 
     if df.empty:
+        st.error("No data loaded - check CSV file")
         st.stop()
 
     # === SIDEBAR FILTERS ===
