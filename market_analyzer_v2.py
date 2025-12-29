@@ -146,19 +146,23 @@ def load_clinic_data():
     """
     Load real clinic data from CSV and add coordinates.
     """
-    import os
+    from pathlib import Path
 
-    # Try to load filtered data first, fall back to unfiltered
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    filtered_path = os.path.join(script_dir, "hudson_valley_acupuncture_clinics_filtered.csv")
-    raw_path = os.path.join(script_dir, "hudson_valley_acupuncture_clinics.csv")
+    # Get the directory where this script is located (works on Streamlit Cloud)
+    script_dir = Path(__file__).parent.resolve()
+    filtered_path = script_dir / "hudson_valley_acupuncture_clinics_filtered.csv"
+    raw_path = script_dir / "hudson_valley_acupuncture_clinics.csv"
 
-    if os.path.exists(filtered_path):
-        df = pd.read_csv(filtered_path)
-    elif os.path.exists(raw_path):
-        df = pd.read_csv(raw_path)
-    else:
-        st.error("CSV data file not found. Please ensure hudson_valley_acupuncture_clinics_filtered.csv exists.")
+    try:
+        if filtered_path.exists():
+            df = pd.read_csv(filtered_path)
+        elif raw_path.exists():
+            df = pd.read_csv(raw_path)
+        else:
+            st.error(f"CSV data file not found in {script_dir}")
+            return pd.DataFrame()
+    except Exception as e:
+        st.error(f"Error loading CSV: {e}")
         return pd.DataFrame()
 
     # Clean data
